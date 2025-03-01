@@ -69,9 +69,9 @@ timeout_seconds: 5               # Request timeout
 - `port_state`: Port enabled/disabled status
 - `port_link_status`: Port link up/down status
 - `port_tx_good_pkt`: Transmitted good packets
-- `port_tx_bad_pkt`: Transmitted bad packets
 - `port_rx_good_pkt`: Received good packets
-- `port_rx_bad_pkt`: Received bad packets
+- `port_tx_good_bytes`: Transmitted good bytes
+- `port_rx_good_bytes`: Received good bytes
 
 ## 🤝 Contributing
 
