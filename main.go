@@ -31,13 +31,13 @@ type Config struct {
 }
 
 type Port struct {
-	Name       string `json:"port"`
-	State      string `json:"state"`
-	LinkStatus string `json:"link_status"`
-	TxGoodPkt  int    `json:"tx_good_pkt"`
-	TxBadPkt   int    `json:"tx_bad_pkt"`
-	RxGoodPkt  int    `json:"rx_good_pkt"`
-	RxBadPkt   int    `json:"rx_bad_pkt"`
+	Name        string `json:"port"`
+	State       string `json:"state"`
+	LinkStatus  string `json:"link_status"`
+	TxGoodPkt   uint64 `json:"tx_good_pkt"`
+	RxGoodPkt   uint64 `json:"rx_good_pkt"`
+	RxGoodBytes uint64 `json:"rx_good_bytes"`
+	TxGoodBytes uint64 `json:"tx_good_bytes"`
 }
 
 type PortStatistics struct {
@@ -49,9 +49,9 @@ type PortStatsCollector struct {
 	portState          *prometheus.Desc
 	portLinkStatus     *prometheus.Desc
 	portTxGoodPkt      *prometheus.Desc
-	portTxBadPkt       *prometheus.Desc
 	portRxGoodPkt      *prometheus.Desc
-	portRxBadPkt       *prometheus.Desc
+	portTxGoodBytes    *prometheus.Desc
+	portRxGoodBytes    *prometheus.Desc
 	lastScrapeDuration prometheus.Gauge
 	scrapeErrorsTotal  prometheus.Counter
 	mutex              sync.Mutex
@@ -75,19 +75,19 @@ func NewPortStatsCollector(config Config) *PortStatsCollector {
 			"Number of good packets transmitted on the port",
 			[]string{"port"}, nil,
 		),
-		portTxBadPkt: prometheus.NewDesc(
-			"port_tx_bad_pkt",
-			"Number of bad packets transmitted on the port",
-			[]string{"port"}, nil,
-		),
 		portRxGoodPkt: prometheus.NewDesc(
 			"port_rx_good_pkt",
 			"Number of good packets received on the port",
 			[]string{"port"}, nil,
 		),
-		portRxBadPkt: prometheus.NewDesc(
-			"port_rx_bad_pkt",
-			"Number of bad packets received on the port",
+		portTxGoodBytes: prometheus.NewDesc(
+			"port_tx_good_bytes",
+			"Number of good bytes transmitted on the port",
+			[]string{"port"}, nil,
+		),
+		portRxGoodBytes: prometheus.NewDesc(
+			"port_rx_good_bytes",
+			"Number of good bytes received on the port",
 			[]string{"port"}, nil,
 		),
 		lastScrapeDuration: promauto.NewGauge(prometheus.GaugeOpts{
@@ -105,9 +105,9 @@ func (c *PortStatsCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.portState
 	ch <- c.portLinkStatus
 	ch <- c.portTxGoodPkt
-	ch <- c.portTxBadPkt
 	ch <- c.portRxGoodPkt
-	ch <- c.portRxBadPkt
+	ch <- c.portTxGoodBytes
+	ch <- c.portRxGoodBytes
 }
 
 func (c *PortStatsCollector) Collect(ch chan<- prometheus.Metric) {
@@ -136,16 +136,16 @@ func (c *PortStatsCollector) Collect(ch chan<- prometheus.Metric) {
 			float64(port.TxGoodPkt), port.Name,
 		)
 		ch <- prometheus.MustNewConstMetric(
-			c.portTxBadPkt, prometheus.GaugeValue,
-			float64(port.TxBadPkt), port.Name,
-		)
-		ch <- prometheus.MustNewConstMetric(
 			c.portRxGoodPkt, prometheus.GaugeValue,
 			float64(port.RxGoodPkt), port.Name,
 		)
 		ch <- prometheus.MustNewConstMetric(
-			c.portRxBadPkt, prometheus.GaugeValue,
-			float64(port.RxBadPkt), port.Name,
+			c.portTxGoodBytes, prometheus.GaugeValue,
+			float64(port.TxGoodBytes), port.Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.portRxGoodBytes, prometheus.GaugeValue,
+			float64(port.RxGoodBytes), port.Name,
 		)
 	}
 
@@ -248,13 +248,13 @@ func parsePortStatistics(doc *goquery.Document) (PortStatistics, error) {
 				case 2:
 					port.LinkStatus = td.Text()
 				case 3:
-					port.TxGoodPkt, _ = strconv.Atoi(strings.TrimSpace(td.Text()))
+					port.TxGoodPkt, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
 				case 4:
-					port.TxBadPkt, _ = strconv.Atoi(strings.TrimSpace(td.Text()))
+					port.RxGoodPkt, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
 				case 5:
-					port.RxGoodPkt, _ = strconv.Atoi(strings.TrimSpace(td.Text()))
+					port.RxGoodBytes, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
 				case 6:
-					port.RxBadPkt, _ = strconv.Atoi(strings.TrimSpace(td.Text()))
+					port.TxGoodBytes, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
 				}
 			})
 			stats.Ports = append(stats.Ports, port)
