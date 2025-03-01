@@ -12,12 +12,9 @@ Many budget-friendly network switches do not support standard SNMP monitoring. T
 
 ## 🖥️ Supported Devices
 
-| Manufacturer | Model | Status | Contributor |
-|--------------|-------|--------|-------------|
-| Ampcom | WAMJHJ-8125MNG | ✅ Verified | @askainet |
-| Horaco | ZX-SWTGW215AS | ✅ Verified | @askainet |
-| Horaco | ZX-SWTGW218AS | ✅ Verified | @pvelati |
-| Sodola | SL-SWTG124AS | ✅ Verified | @dennyreiter |
+| Manufacturer | Model | FW | Status | Contributor |
+|--------------|-------|----|--------|-------------|
+| XikeStor | SKS3200-8E1X | V20.0.8 | ✅ Verified | @mura |
 
 ## 🚀 Installation
 
