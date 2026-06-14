@@ -132,19 +132,19 @@ func (c *PortStatsCollector) Collect(ch chan<- prometheus.Metric) {
 			linkStatusToFloat(port.LinkStatus), port.Name,
 		)
 		ch <- prometheus.MustNewConstMetric(
-			c.portTxGoodPkt, prometheus.GaugeValue,
+			c.portTxGoodPkt, prometheus.CounterValue,
 			float64(port.TxGoodPkt), port.Name,
 		)
 		ch <- prometheus.MustNewConstMetric(
-			c.portRxGoodPkt, prometheus.GaugeValue,
+			c.portRxGoodPkt, prometheus.CounterValue,
 			float64(port.RxGoodPkt), port.Name,
 		)
 		ch <- prometheus.MustNewConstMetric(
-			c.portTxGoodBytes, prometheus.GaugeValue,
+			c.portTxGoodBytes, prometheus.CounterValue,
 			float64(port.TxGoodBytes), port.Name,
 		)
 		ch <- prometheus.MustNewConstMetric(
-			c.portRxGoodBytes, prometheus.GaugeValue,
+			c.portRxGoodBytes, prometheus.CounterValue,
 			float64(port.RxGoodBytes), port.Name,
 		)
 	}
