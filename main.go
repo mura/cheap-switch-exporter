@@ -248,13 +248,13 @@ func parsePortStatistics(doc *goquery.Document) (PortStatistics, error) {
 				case 2:
 					port.LinkStatus = td.Text()
 				case 3:
-					port.TxGoodPkt, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
+					port.TxGoodPkt = parseStatValue(td.Text())
 				case 4:
-					port.RxGoodPkt, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
+					port.RxGoodPkt = parseStatValue(td.Text())
 				case 5:
-					port.RxGoodBytes, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
+					port.RxGoodBytes = parseStatValue(td.Text())
 				case 6:
-					port.TxGoodBytes, _ = strconv.ParseUint(strings.TrimSpace(td.Text()), 10, 64)
+					port.TxGoodBytes = parseStatValue(td.Text())
 				}
 			})
 			stats.Ports = append(stats.Ports, port)
@@ -297,4 +297,18 @@ func readConfig(filename string) (Config, error) {
 	}
 
 	return config, nil
+}
+
+func parseStatValue(val string) uint64 {
+	val = strings.TrimSpace(val)
+	parts := strings.Split(val, "-")
+	if len(parts) == 2 {
+		high, err1 := strconv.ParseUint(parts[0], 10, 64)
+		low, err2 := strconv.ParseUint(parts[1], 10, 64)
+		if err1 == nil && err2 == nil {
+			return (high << 32) + low
+		}
+	}
+	res, _ := strconv.ParseUint(val, 10, 64)
+	return res
 }

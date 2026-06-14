@@ -14,7 +14,7 @@ Many budget-friendly network switches do not support standard SNMP monitoring. T
 
 | Manufacturer | Model | FW | Status | Contributor |
 |--------------|-------|----|--------|-------------|
-| XikeStor | SKS3200-8E1X | V20.0.8 | ✅ Verified | @mura |
+| XikeStor | SKS3200-8E1X | V20.0.19 | ✅ Verified | @mura |
 
 ## 🚀 Installation
 
